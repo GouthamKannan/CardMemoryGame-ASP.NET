@@ -1,0 +1,55 @@
+﻿<%--
+    This is the master page of the application
+
+    File name     : Home.Master
+    Project name  : Card Memory Game 
+    Written by    : Goutham
+    Date modified : 23-09-2020
+    Dependencies  : .NET framework 4.7.2
+ --%>
+
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Home.Master.cs" Inherits="CardMemoryGame.Site1" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main_page</title>
+    <link href="CSS/style.css" rel="stylesheet" />
+    <script src="Scripts/script.js"></script>
+    <%-- <script type="text/javascript" src="http://code.jquery.com/jquery.js"></script>--%>  
+
+</head>
+
+<body>
+    <form id="form1" runat="server">
+
+        <%-- Navigation bar --%>
+        <header class="nav_border"><h2 class="indexh2">Card Memory Game</h2>
+            <nav>
+                <ul class="nav_links">
+                    <asp:ContentPlaceHolder ID="NavigationContent" runat="server">
+                    </asp:ContentPlaceHolder>
+                </ul>
+            </nav>
+        </header>
+
+        <%-- Web page content --%>
+        <div>
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+        <asp:label runat="server" id="label"></asp:label>
+        <%-- Footer content --%>
+        <div runat="server" id="footer" class="footer">
+            <p>This is a test website. Do not enter any personal or sensitive information<br />
+                Image are taken form <a href="https://opengameart.org/" style="color: white;"> here</a> 
+                and <a href="https://www.pinterest.ca/pin/598697344184536467/" style="color: white;">here</a>
+        </div>
+        
+    </form>
+</body>
+</html>
