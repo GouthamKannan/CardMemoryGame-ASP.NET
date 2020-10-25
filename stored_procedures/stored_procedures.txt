@@ -1,0 +1,185 @@
+CREATE PROCEDURE [dbo].[LoginValidation]    
+    @Username nvarchar(50),    
+    @Password nvarchar(50)    
+AS    
+BEGIN    
+     SELECT *     
+  FROM UserDetails     
+  WHERE [UserName] = @Username COLLATE SQL_Latin1_General_CP1_CS_AS    
+  AND [Password] = @Password COLLATE SQL_Latin1_General_CP1_CS_AS    
+END 
+-------------------------------------------------------------------------------
+  
+CREATE PROCEDURE [dbo].[ProfileDetails]    
+    @Username nvarchar(50)    
+AS    
+BEGIN    
+     SELECT UserName,EmailId     
+  FROM UserDetails     
+  WHERE [UserName] = @Username COLLATE SQL_Latin1_General_CP1_CS_AS    
+END 
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[UpdateProfileDetails]    
+ @Username nvarchar(50),    
+ @Password nvarchar(50),    
+ @NewUsername nvarchar(50),    
+ @NewEmailId nvarchar(50)    
+    
+AS    
+BEGIN    
+ if ((select count(userid)   
+ from UserDetails   
+ where UserName = @Username   
+ and [Password] = @Password) > 0)  
+ begin  
+  update U set U.UserName = @NewUsername, U.EmailId = @NewEmailId    
+  --select *    
+  from UserDetails U    
+  where UserName = @Username    
+  and [Password] = @Password    
+ end  
+ SELECT *     
+ FROM UserDetails     
+ WHERE [UserName] = @NewUsername COLLATE SQL_Latin1_General_CP1_CS_AS    
+ and [Password] = @Password COLLATE SQL_Latin1_General_CP1_CS_AS    
+END    
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[UpdateProfilePassword]    
+ @Username nvarchar(50),    
+ @Password nvarchar(50),    
+ @NewPassword nvarchar(50)    
+AS    
+BEGIN    
+  IF ((SELECT count(Userid)     
+  FROM UserDetails     
+  WHERE UserName = @Username     
+  and Password = @Password) > 0)    
+ BEGIN    
+    update U set U.Password = @NewPassword, U.TempPassword = 0        
+    --select *        
+    from UserDetails U        
+    where UserName = @Username        
+    and [Password] = @Password        
+ END    
+  SELECT *         
+  FROM UserDetails         
+  WHERE [UserName] = @Username COLLATE SQL_Latin1_General_CP1_CS_AS        
+  and [Password] = @NewPassword COLLATE SQL_Latin1_General_CP1_CS_AS        
+END 
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[GetTopScores]    
+AS    
+BEGIN    
+  SELECT top 10 UserName,HighScore    
+  FROM UserDetails    
+  where HighScore is not null  
+  order by HighScore desc    
+END 
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[GetUserTopScores]  
+ @Username nvarchar(50)  
+AS  
+BEGIN  
+  SELECT Scores  
+  FROM UserDetails  
+  WHERE UserName = @Username  
+END  
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[UpdateUserScores]    
+ @Username nvarchar(50),  
+ @Scores nvarchar(50),  
+ @HighScore int  
+AS    
+BEGIN  
+ UPDATE U SET U.Scores = @Scores, U.HighScore = @HighScore  
+ --SELECT *  
+ FROM UserDetails U  
+ WHERE UserName = @Username    
+END 
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[SignUp]        
+ @Username nvarchar(50),      
+ @Password nvarchar(50),      
+ @Email nvarchar(50)      
+AS        
+BEGIN      
+ if exists (      
+ Select *      
+ from UserDetails      
+ where UserName = @Username)      
+ BEGIN      
+  Select *      
+  from UserDetails      
+  where UserName = @Username      
+    
+  return      
+ END    
+ else    
+ BEGIN    
+  Insert into UserDetails (UserName,EmailId,Password,TempPassword)      
+  values (@Username,@Email,@Password,0)    
+ END    
+       
+END
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[UsernameValidation]    
+ @Username nvarchar(50),  
+ @CurrentUsername nvarchar(50)  
+AS    
+BEGIN    
+ Select *    
+ from UserDetails    
+ where UserName = @Username  
+ and UserId not in (Select UserId from UserDetails where UserName = @CurrentUsername)  
+END
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[UserValidation]    
+ @Username nvarchar(50),    
+ @Email nvarchar(50)  
+AS    
+BEGIN      
+  SELECT *         
+  FROM UserDetails         
+  WHERE [UserName] = @Username      
+  and [EmailId] = @Email       
+END 
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[StoreTempPassword]    
+ @Username nvarchar(50),     
+ @NewPassword nvarchar(50)    
+AS    
+BEGIN    
+  IF ((SELECT count(Userid)     
+  FROM UserDetails     
+  WHERE UserName = @Username) > 0)    
+ BEGIN    
+    update U set U.Password = @NewPassword, U.TempPassword = 1        
+    --select *        
+    from UserDetails U        
+    where UserName = @Username        
+ END    
+  SELECT *         
+  FROM UserDetails         
+  WHERE [UserName] = @Username COLLATE SQL_Latin1_General_CP1_CS_AS        
+  and [Password] = @NewPassword COLLATE SQL_Latin1_General_CP1_CS_AS        
+END    
+-------------------------------------------------------------------------------
+
+CREATE PROCEDURE [dbo].[CheckTempPassword]    
+ @Username nvarchar(50)   
+AS    
+BEGIN    
+  SELECT *         
+  FROM UserDetails         
+  WHERE [UserName] = @Username COLLATE SQL_Latin1_General_CP1_CS_AS        
+  and [TempPassword] = 1   
+END    
